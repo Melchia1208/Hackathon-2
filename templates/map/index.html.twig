@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Simple Map{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="row justify-content-center m-5" style="height: 100%">
+        <div id="map" class="h-75 w-75" style="height: 100%;"></div>
+    </div>
+
+    <script type="text/javascript">
+        function initMap() {
+            let mapOptions = {
+                center:new google.maps.LatLng(48.5734053, 7.7521113),
+                zoom:14
+            };
+
+            let map = new google.maps.Map(document.getElementById("map"),mapOptions);
+
+            {% for personnage in personnages %}
+
+            let marker{{ personnage.id }} = new google.maps.Marker({
+                position: new google.maps.LatLng({{ personnage.lat }}, {{ personnage.lng }}),
+                map: map,
+                animation:google.maps.Animation.Drop
+            });
+
+            let infowindow{{ personnage.id }} = new google.maps.InfoWindow({
+                content:"<h3>Nique-toi !</h3>"
+            });
+
+            google.maps.event.addListener(marker{{ personnage.id }}, 'click', function() {
+                infowindow{{ personnage.id }}.open(map,marker{{ personnage.id }},
+                    map.setZoom(18),
+                    map.setCenter(marker{{ personnage.id }}.getPosition())
+                );
+            });
+
+            {% endfor %}
+        }
+    </script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB9hsdZwyrf5QEK4uYafkHV-_RBW6gU0Kg&callback=initMap"></script>
+
+{% endblock %}
